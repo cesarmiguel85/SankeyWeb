@@ -1,5 +1,5 @@
 # SankeyWEB
-A simple web component to display a Sankey Graph (horizontal weighted relationship graph).
+A simple web site wrapper to display a Sankey Graph (horizontal weighted relationship graph).
 Used to integrate a Sankey Graph into a Data Studio dashboard or Powerpoint (using WebPreview add-in).
 Format: ![Timeline example](/image.jpg)
 
@@ -11,14 +11,14 @@ Format: ![Timeline example](/image.jpg)
 * Google charts for Sankey Graph generation
 
 ## Input: GET parameters
-key: google sheet key id 
-sheet: sheet's id (gid)
-range: range with data (with headers, first line is ignored)
-width: width of element (px)
-height: height of element (px)
+* key: google sheet key id 
+* sheet: sheet's id (gid)
+* range: range with data (with headers, first line is ignored)
+* width: width of element (px)
+* height: height of element (px)
 
 ## Data
-3 columns:
+4 columns:
 - From (text)
 - To (text)
 - Weight (number)
