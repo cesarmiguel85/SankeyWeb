@@ -39,7 +39,8 @@
 
             // Sets chart options.
             var options = {
-            width: 900,
+            width: mywidth,
+            height: myheight,
             sankey: {
                 iterations: 0,
             }
@@ -56,12 +57,27 @@
         let dataWeight = [];
         let dataDesc = [];
 
+        let mywidth = 800;
+        let myheight = 500;
+
         let allData = [];
 
         //Get key to Google Sheet, sheet id and timeline range (ignore header! ex: F2:H100)
         let key = findGetParameter("key");
         let sheet = findGetParameter("sheet");
         let range = findGetParameter("range");
+        try{
+            mywidth = parseInt(findGetParameter("width"));
+            console.log(mywidth)
+        } catch(e) {
+        }
+
+        try {
+            myheight = parseInt(findGetParameter("height"));
+            console.log(myheight)
+        } catch(e) {
+        }
+        
 
     
         //console.log("https://docs.google.com/spreadsheets/u/0/d/" + key + "/pub?gid=" + sheet + "&range=" + range + "&output=tsv")
@@ -93,7 +109,7 @@
                     break;
                 }
 
-                console.log(entries)
+                //console.log(entries)
                 entries[2] = parseInt(entries[2])
 
                 allData.push(entries);
@@ -103,6 +119,9 @@
             //console.log(allData)
 
             drawChart(allData)
+
+            $('#sankey_basic').height(myheight);
+            $('#sankey_basic').width(mywidth);
             
         }
 
@@ -112,7 +131,7 @@
 
 <body>
 
-    <div id="sankey_basic" style="width: 1000px; height: 700px;"></div>
+    <div id="sankey_basic" ></div>
 
 </body>
 
