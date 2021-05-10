@@ -8,15 +8,14 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="css/progress-wizard.min.css" rel="stylesheet">
-
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
     <script src="js/papaparse.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <script>
         //Function to get parameters from GET request when calling URL
+
         function findGetParameter(parameterName) {
             var result = null,
                 tmp = [];
@@ -27,13 +26,38 @@
             }
             return result;
         }
-    </script>
 
-    <script>
+        google.charts.load('current', {'packages':['sankey']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart(myData) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', '');
+            data.addColumn({type: 'string', role: 'tooltip'});
+            data.addRows(allData);
+
+            // Sets chart options.
+            var options = {
+            width: 900,
+            sankey: {
+                iterations: 0,
+            }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+            chart.draw(data, options);
+        }
+
         //Create arrays with values
-        let timeDate = [];
-        let timeDesc = [];
-        let timeDone = [];
+        let dataFrom = [];
+        let dataTo = [];
+        let dataWeight = [];
+        let dataDesc = [];
+
+        let allData = [];
 
         //Get key to Google Sheet, sheet id and timeline range (ignore header! ex: F2:H100)
         let key = findGetParameter("key");
@@ -41,52 +65,41 @@
         let range = findGetParameter("range");
 
         //Use papaparse to get data from CSV
-        Papa.parse("https://docs.google.com/spreadsheet/pub?key=" + key + "&single=true&gid=" + sheet + "&range=" + range + "&output=csv", {
+        //https://docs.google.com/spreadsheets/d/e/2PACX-1vSFtl8qm4nImEcrf9b2WyDX5G0JZkbycaTUvwMBN2BnIQnEuGniya8jNFJYmoApcYFKG-OYWKIvKzOC/pub?output=csv
+        //Papa.parse("https://docs.google.com/spreadsheet/pub?key=" + key + "&single=true&gid=" + sheet + "&range=" + range + "&output=csv&callback=googleDocCallback", {
+        console.log("https://docs.google.com/spreadsheets/u/0/d/" + key + "/pub?gid=" + sheet + "&range=" + range + "&output=tsv")
+        
+        Papa.parse("https://docs.google.com/spreadsheets/u/0/d/" + key + "/pub?gid=" + sheet + "&range=" + range + "&output=tsv", {
+        //Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vSFtl8qm4nImEcrf9b2WyDX5G0JZkbycaTUvwMBN2BnIQnEuGniya8jNFJYmoApcYFKG-OYWKIvKzOC/pub?output=csv&", {
+
             download: true,
             step: function(row) {
                 //Iterate each row
-                timeDate.push(row.data[0]);
-                timeDesc.push(row.data[1]);
-                timeDone.push(row.data[2]);
+                dataFrom.push(row.data[0]);
+                dataTo.push(row.data[1]);
+                dataWeight.push(row.data[2]);
+                dataDesc.push(row.data[3]);
+
+                allData.push([row.data[0],row.data[1],row.data[2].row.data[3]]);
+
+
             },
             complete: function() {
                 //When finished parsing...
 
                 console.log("All done!");
-                console.log(timeDate);
-                console.log(timeDesc);
-                console.log(timeDone);
+                console.log(dataFrom);
+                console.log(dataTo);
+                console.log(dataWeight);
+                console.log(dataDesc);
 
 
                 let myclass = "";
                 let myprogess = "";
 
-                //Create the <li> elements
-                for (var i = 0; i < timeDate.length; i++) {
 
-                    myclass = "";
-                    myprogress = "";
-
-                    switch (parseFloat(timeDone[i])) {
-                        case 1:
-                            myclass = "completed";
-                            break;
-                        case 0:
-                            myclass = "";
-                            break;
-                        default:
-                            myclass = "active";
-                            myprogress = "[Progress: " + timeDone[i] * 100 + "%]<br>";
-                    }
-
-                    $("#timeline").append(`
-                    <li class="` + myclass + `">
-                        <span class="bubble"></span>` + timeDate[i] + `<br><br><small>` + myprogress + timeDesc[i] + `</small>
-                    </li>
-                    `);
-
-                }
-
+                if (allData.length>1) drawChart(allData);
+                
 
             }
         });
@@ -95,11 +108,7 @@
 
 <body>
 
-    <ul id="timeline" class="progress-indicator">
-
-    </ul>
-
-
+    <div id="sankey_basic" style="width: 900px; height: 900px;"></div>
 
 </body>
 
