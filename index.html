@@ -65,8 +65,10 @@
 
 
         try {
-            zoom = parseInt(findGetParameter("zoom"));
-            console.log(zoom)
+            if (!isNaN(parseInt(findGetParameter("height")))){
+                zoom = parseInt(findGetParameter("zoom"));
+                console.log(zoom)
+            }
         } catch(e) {
         }
         
