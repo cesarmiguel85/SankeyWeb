@@ -14,8 +14,9 @@ Format: ![Timeline example](/image.jpg)
 * key: google sheet key id 
 * sheet: sheet's id (gid)
 * range: range with data (with headers, first line is ignored)
-* width: width of element (px)
-* height: height of element (px)
+* (optional) width: width of element (px) - default view width
+* (optional) height: height of element (px) - default view height
+* (optional) zoom: scale factor  - default 1
 
 ## Data
 4 columns:
