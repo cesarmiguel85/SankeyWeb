@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
+<!-- START: GET PARAMS-->
     <script>
         //Function to get parameters from GET request when calling URL
 
@@ -26,41 +26,15 @@
             return result;
         }
 
-        google.charts.load('current', {'packages':['sankey']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart(myData) {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'From');
-            data.addColumn('string', 'To');
-            data.addColumn('number', '');
-            data.addColumn({type: 'string', role: 'tooltip'});
-            data.addRows(allData);
-
-            // Sets chart options.
-            var options = {
-            width: mywidth,
-            height: myheight,
-            tooltip: { textStyle: { fontSize: 10 } },
-            sankey: {
-                iterations: 0,
-            }
-            };
-
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
-            chart.draw(data, options);
-            
-        }
-
+       
         //Create arrays with values
         let dataFrom = [];
         let dataTo = [];
         let dataWeight = [];
         let dataDesc = [];
 
-        let mywidth = 800;
-        let myheight = 500;
+        let mywidth = Math.max($(window).width()-50 || 500);
+        let myheight = Math.max($(window).height()-50 || 300);
 
         let zoom = 1;
 
@@ -71,16 +45,24 @@
         let sheet = findGetParameter("sheet");
         let range = findGetParameter("range");
         try{
-            mywidth = parseInt(findGetParameter("width"));
-            console.log(mywidth)
+            if (!isNaN(parseInt(findGetParameter("width")))){
+                mywidth = parseInt(findGetParameter("width"));
+                console.log("width param: "+mywidth)
+            }
         } catch(e) {
+            console.log("width: "+mywidth)
         }
 
         try {
-            myheight = parseInt(findGetParameter("height"));
-            console.log(myheight)
+            if (!isNaN(parseInt(findGetParameter("height")))){
+                myheight = parseInt(findGetParameter("height"));
+                console.log("height param:"+myheight)
+            }
         } catch(e) {
+            console.log("height :"+myheight)
         }
+        
+
 
         try {
             zoom = parseInt(findGetParameter("zoom"));
@@ -88,11 +70,14 @@
         } catch(e) {
         }
         
+    </script>
+<!-- END: GET PARAMS-->
 
+
+<!-- START: GET & PROCESS DATA-->
+    <script>
     
         //console.log("https://docs.google.com/spreadsheets/u/0/d/" + key + "/pub?gid=" + sheet + "&range=" + range + "&output=tsv")
-
-
         $.ajax({
             type: "GET",
             url: "https://docs.google.com/spreadsheets/u/0/d/" + key + "/pub?gid=" + sheet + "&range=" + range + "&output=tsv",
@@ -137,23 +122,108 @@
 
 
     </script>
+<!-- END: GET & PROCESS DATA-->
 
+
+<!-- START: PLOT GRAPH-->
+    <script>
+
+        google.charts.load('current', {'packages':['sankey']});
+        google.charts.setOnLoadCallback(drawChart);
+
+
+        function drawChart(myData) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', '');
+            data.addColumn({type: 'string', role: 'tooltip'});
+            data.addRows(allData);
+
+            // Sets chart options.
+            var options = {
+            width: mywidth,
+            height: myheight,
+            tooltip: { textStyle: { fontSize: 10 } },
+            sankey: {
+                iterations: 0,
+            }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+            chart.draw(data, options);
+            
+        }
+
+    </script>
     <style>
         .google-visualization-tooltip * {
             font:9px !important;
         }
         
     </style>
+<!-- END: PLOT GRAPH-->
+
+
 </head>
 
 <body>
 
     <div id="sankey_basic" ></div>
 
+<!-- START: APPLY INITIAL ZOOM IF PASSED-->
     <script>
         console.log("zoom "+zoom)
         $('body').css({"transform":"scale("+zoom+")"})
     </script>
+<!-- END: APPLY INITIAL ZOOM IF PASSED-->
+
+
+
+<!-- START: ZOOM BUTTONS AND FUNCTIONNALITY-->
+    <style>
+        .buttonzoom {
+            width:20px;
+            height:20px;
+        }
+
+        #buttonszoom {
+            display: block;
+            position: absolute;
+            top: 0px;
+            left:0px;
+            width:50px;
+            height:20px;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.61);
+            padding:4px;
+        }
+    </style>
+    <script>
+
+        function changeZoom(increment) {
+            zoom=zoom+increment;
+            console.log("zoom: "+zoom);
+            $('#sankey_basic').css({"transform":"scale("+zoom+")","transform-origin":"0 0 0"})
+        }
+
+    </script>
+    <div id="buttonszoom">
+        
+        <table style="width:50px; border-collapse: collapse; border:0px;">
+            <tr style="border-collapse: collapse; border:0px;">
+                <td >
+                    <img src="minus.png" onclick="javascript:changeZoom(-0.1)" alt="De-zoom" class="buttonzoom">
+                </td>
+                <td >
+                    <img src="plus.png" onclick="javascript:changeZoom(0.1)" alt="Zoom" class="buttonzoom">
+                </td>
+            </tr>
+        </table>
+    </div>
+<!-- END: ZOOM BUTTONS AND FUNCTIONNALITY-->
+
 
 </body>
 
