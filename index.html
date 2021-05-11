@@ -41,6 +41,7 @@
             var options = {
             width: mywidth,
             height: myheight,
+            tooltip: { textStyle: { fontSize: 10 } },
             sankey: {
                 iterations: 0,
             }
@@ -49,6 +50,7 @@
             // Instantiates and draws our chart, passing in some options.
             var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
             chart.draw(data, options);
+            
         }
 
         //Create arrays with values
@@ -59,6 +61,8 @@
 
         let mywidth = 800;
         let myheight = 500;
+
+        let zoom = 1;
 
         let allData = [];
 
@@ -75,6 +79,12 @@
         try {
             myheight = parseInt(findGetParameter("height"));
             console.log(myheight)
+        } catch(e) {
+        }
+
+        try {
+            zoom = parseInt(findGetParameter("zoom"));
+            console.log(zoom)
         } catch(e) {
         }
         
@@ -127,11 +137,23 @@
 
 
     </script>
+
+    <style>
+        .google-visualization-tooltip * {
+            font:9px !important;
+        }
+        
+    </style>
 </head>
 
 <body>
 
     <div id="sankey_basic" ></div>
+
+    <script>
+        console.log("zoom "+zoom)
+        $('body').css({"transform":"scale("+zoom+")"})
+    </script>
 
 </body>
 
