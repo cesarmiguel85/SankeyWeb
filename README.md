@@ -1,5 +1,5 @@
 # SankeyWEB
-A simple web site wrapper to display a Sankey Graph (horizontal weighted relationship graph).
+A simple web site wrapper to display a Sankey Graph (horizontal weighted relationship graph) with a basic zoom option.
 Used to integrate a Sankey Graph into a Data Studio dashboard or Powerpoint (using WebPreview add-in).
 Format: ![Timeline example](/image.jpg)
 
@@ -11,8 +11,8 @@ Format: ![Timeline example](/image.jpg)
 * Google charts for Sankey Graph generation
 
 ## Input: GET parameters
-* key: google sheet key id 
-* sheet: sheet's id (gid)
+* key: google sheet key id to get from adress bar (remember to publish the Google Sheet in TSV)
+* sheet: sheet's id to get from adress bar (gid)
 * range: range with data (with headers, first line is ignored)
 * (optional) width: width of element (px) - default view width
 * (optional) height: height of element (px) - default view height
